@@ -4,6 +4,7 @@ import java.awt.*;  // BorderLayout, Color, Dimension, GridLayout
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 // import java.security.SecureRandom; // SecureRandom
 import java.util.Base64; // Base64
 
@@ -21,24 +22,31 @@ public class MainFrame extends JFrame{
    */
   private String getGen256RandomKey() throws NoSuchAlgorithmException{
 
-    // SecureRandom random = new SecureRandom();
-    // byte[] bytes = new byte[256];
-
-    // random.nextBytes(bytes);
-    // String encodedKey = Base64.getEncoder().encodeToString(bytes);
-
-    // System.out.println(encodedKey);
-
     String sentence = "God will make a way for me";
-
     MessageDigest digest = MessageDigest.getInstance("SHA-256");
     byte[] hash = digest.digest(sentence.getBytes(StandardCharsets.UTF_8));
     String encoded = Base64.getEncoder().encodeToString(hash);
 
     System.out.println(encoded);
-
-    //
     return encoded;
+  }
+
+  /**
+   * get256bitesRandomString
+   *  generates a random 256-bit (or 32 byte) secret and
+   *  then base64 encodes it to a string so it can be easily stored and handled.
+   * @return
+   */
+  private String get256bitesRandomString() {
+    SecureRandom random = new SecureRandom();
+        byte[] sharedSecret = new byte[32];  // 32 bytes is 256 bits
+        random.nextBytes(sharedSecret);
+        String encodedSecret = Base64.getEncoder().encodeToString(sharedSecret);
+        System.out.println("Generated secret: " + encodedSecret);
+
+        // ex: Xoho4wSYYDt7otsd4wcWrd5EoL69pr12Og4XTa+3fjA=
+
+        return encodedSecret;
   }
 
   /**
@@ -72,13 +80,17 @@ public class MainFrame extends JFrame{
     btnOk.addActionListener(e -> {
       String firstName = tfFirstName.getText();
       String lastName = tfLastName.getText();
+
       // lbWelcome.setText("Welcome " + firstName + " " + lastName);
-      try {
-        lbWelcome.setText(getGen256RandomKey());
-      } catch (NoSuchAlgorithmException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-      }
+      // try {
+      //   lbWelcome.setText(getGen256RandomKey());
+      // } catch (NoSuchAlgorithmException e1) {
+      //   // TODO Auto-generated catch block
+      //   e1.printStackTrace();
+      // }
+
+      lbWelcome.setText(get256bitesRandomString());
+
     });
 
     JButton btnCancel = new JButton("Cancel");
